@@ -1,13 +1,24 @@
 
+
 ## fastText
 <br>
 
-The **fastText** R package is an interface to the [fastText](https://github.com/facebookresearch/fastText) library for efficient learning of word representations and sentence classification. More details on the functionality of fastText can be found in my [blog-post](http://mlampros.github.io/2019/04/11/fastText_updated_version/) and in the package documentation.
+The **fastText** R package is an interface to the [fastText](https://github.com/facebookresearch/fastText) library for efficient learning of word representations and sentence classification. More details on the functionality of fastText can be found in the [first](http://mlampros.github.io/2019/04/11/fastText_updated_version/) and [second](http://mlampros.github.io/2021/05/14/fasttext_language_identification/) blog posts and in the package documentation.
 
 <br>
 
-To install the package from Github you can **either** use the *install_github* function of the *remotes* package,
-<br><br>
+You can either install the package from CRAN using,
+
+```R
+
+install.packages("fastText")
+ 
+
+```
+
+<br>
+
+or from Github using the *install_github* function of the *remotes* package,
 
 ```R
 
@@ -19,7 +30,6 @@ remotes::install_github('mlampros/fastText')
 
 **or** directly download the fastText-zip file using the **Clone or download** button in the [repository page](https://github.com/mlampros/fastText), extract it locally (rename it to *fastText* if necessary and check that files such as DESCRIPTION, NAMESPACE etc. are present when you open the fastText folder) and then run,
 
-<br>
 
 ```R
 
@@ -47,10 +57,28 @@ system("R CMD INSTALL fastText_1.0.1.tar.gz")
 ```
 <br>
 
-Use the following link to report bugs/issues (for the R wrapper),
+Use the following link to report bugs/issues (for the R package port),
 <br><br>
 
 [https://github.com/mlampros/fastText/issues](https://github.com/mlampros/fastText/issues)
 
+<br>
+
+### **Citation:**
+
+If you use the **fastText** R package in your paper or research please cite both **fastText** and the **original articles / software** `https://CRAN.R-project.org/package=fastText`:
+
+<br>
+
+```R
+@Manual{,
+  title = {{fastText}: Efficient Learning of Word Representations and
+    Sentence Classification using R},
+  author = {Lampros Mouselimis},
+  year = {2021},
+  note = {R package version 1.0.0},
+  url = {https://CRAN.R-project.org/package=fastText},
+}
+```
 
 <br>
