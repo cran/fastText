@@ -2,8 +2,8 @@ Package: fastText
 Type: Package
 Title: Efficient Learning of Word Representations and Sentence
         Classification
-Version: 1.0.2
-Date: 2022-04-07
+Version: 1.0.3
+Date: 2022-10-08
 Authors@R: c( person("Lampros", "Mouselimis", email = "mouselimislampros@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "https://orcid.org/0000-0002-8024-1546")), person("Facebook", "Inc", role = "cph") )
 URL: https://github.com/mlampros/fastText
 BugReports: https://github.com/mlampros/fastText/issues
@@ -19,11 +19,11 @@ Depends: R(>= 3.2.3)
 LinkingTo: Rcpp
 Suggests: testthat, covr, knitr, rmarkdown
 VignetteBuilder: knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 NeedsCompilation: yes
-Packaged: 2022-04-07 16:56:04 UTC; lampros
+Packaged: 2022-10-08 04:23:21 UTC; lampros
 Author: Lampros Mouselimis [aut, cre] (<https://orcid.org/0000-0002-8024-1546>),
   Facebook Inc [cph]
 Maintainer: Lampros Mouselimis <mouselimislampros@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-04-07 17:22:30 UTC
+Date/Publication: 2022-10-08 06:30:02 UTC
