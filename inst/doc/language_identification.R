@@ -5,7 +5,7 @@ dir_wili_2018 = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS D
 dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR TO THE HUMAN DECLARATION FILES/declaration_human_rights'         # the other 'dir_files' directory in line 663 is mentioned just in case I download the declaration files inside the 'wili-2018' directory
 
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  fasttext_supported_languages = c('af', 'als', 'am', 'an', 'ar', 'arz', 'as', 'ast', 'av',
 #                                   'az', 'azb', 'ba', 'bar', 'bcl', 'be', 'bg', 'bh', 'bn',
@@ -28,7 +28,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                                   'vep', 'vi', 'vls', 'vo', 'wa', 'war', 'wuu', 'xal', 'xmf',
 #                                   'yi', 'yo', 'yue', 'zh')
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  isocodes = ISOcodes::ISO_639_2
 #  # head(isocodes)
@@ -49,7 +49,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  isocodes_fasttext$Name_tolower = lower_nams
 #  isocodes_fasttext
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  print_accuracy = function(size_input_data,
 #                            true_data,
@@ -94,7 +94,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  head(wili_test_y)
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  file_ftz = system.file("language_identification/lid.176.ftz", package = "fastText")
 #  
@@ -105,7 +105,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                                                  threads = 1,
 #                                                  verbose = TRUE)
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  dtbl_res_in$true_label = wili_test_y$V1
 #  # dtbl_res_in
@@ -121,7 +121,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'fastText (.ftz pre-trained model)')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  file_bin = file.path(dir_wili_2018, 'lid.176.bin')
 #  
@@ -132,7 +132,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                                                  threads = 1,
 #                                                  verbose = TRUE)
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  dtbl_res_in$true_label = wili_test_y$V1
 #  # dtbl_res_in
@@ -148,7 +148,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'fastText (.ftz pre-trained model)')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  tbl = table(merg_labels$true_label, merg_labels$Alpha_3_B)
 #  
@@ -172,7 +172,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  plt_tbl
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  require(cld2)
 #  
@@ -191,12 +191,12 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'cld2')
 #  
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  
 #  fastText:::compute_elapsed_time(t_start)
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  require(cld3)
 #  
@@ -215,12 +215,12 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'cld3')
 #  
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  
 #  fastText:::compute_elapsed_time(t_start)
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  threads = parallel::detectCores()
 #  require(textcat)
@@ -235,7 +235,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  cat(glue::glue("Isocode-Names:  {length(unique(isocodes_fasttext$Name_tolower))}  TC_byte_profiles:  {length(names(textcat::TC_byte_profiles))}  Intersected Names: {length(intersect(nams_profiles, unique(isocodes_fasttext$Name_tolower)))}"), '\n')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  t_start = proc.time()
 #  textc = as.vector(unlist(parallel::mclapply(1:length(wili_test_x$V1), function(x) {
@@ -247,7 +247,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  
 #  unique(textc)
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  textc_dtbl = data.table::setDT(list(Name_tolower = textc))
 #  textc_dtbl$true_label = wili_test_y$V1
@@ -261,12 +261,12 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 preds_data = merg_labels_textc$Alpha_3_B,
 #                 method = 'textcat ( TC_byte_profiles )')
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  
 #  fastText:::compute_elapsed_time(t_start)
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  names(textcat::TC_char_profiles)
 #  
@@ -278,7 +278,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  cat(glue::glue("Isocode-Names:  {length(unique(isocodes_fasttext$Name_tolower))}  TC_char_profiles:  {length(names(textcat::TC_char_profiles))}  Intersected Names: {length(intersect(nams_profiles, unique(isocodes_fasttext$Name_tolower)))}"), '\n')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  t_start = proc.time()
 #  textc = as.vector(unlist(parallel::mclapply(1:length(wili_test_x$V1), function(x) {
@@ -290,7 +290,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  
 #  unique(textc)
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  textc_dtbl = data.table::setDT(list(Name_tolower = textc))
 #  textc_dtbl$true_label = wili_test_y$V1
@@ -304,12 +304,12 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 preds_data = merg_labels_textc$Alpha_3_B,
 #                 method = 'textcat ( TC_char_profiles )')
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  
 #  fastText:::compute_elapsed_time(t_start)
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  require(franc)
 #  
@@ -327,12 +327,12 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'franc')
 #  
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  
 #  fastText:::compute_elapsed_time(t_start)
 #  
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  
 #  dtbl_bench = data.table::setDT(list(method = c('fastText (ftz)', 'fastText (bin)', 'cld2', 'cld3', 'textcat (byte)', 'textcat (char)', 'franc'),
 #                                      rows = c(50500, 50500, 50500, 50500, 50500, 50500, 50500),
@@ -343,32 +343,32 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                                      seconds = c(5, 5, 2, 18, 83, 100, 179),
 #                                      threads = c(1, 1, 1, 1, 8, 8, 8)))
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  dtbl_bench = dtbl_bench[order(dtbl_bench$accuracy, decreasing = T), ]
 #  dtbl_bench
 #  
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  dtbl_bench = dtbl_bench[order(dtbl_bench$pred_perc, decreasing = T), ]
 #  dtbl_bench
 #  
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  dtbl_bench = dtbl_bench[order(dtbl_bench$NAs, decreasing = F), ]
 #  dtbl_bench
 #  
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  dtbl_bench = dtbl_bench[order(dtbl_bench$seconds, decreasing = F), ]
 #  dtbl_bench
 #  
 
-## ---- eval = F, echo = T------------------------------------------------------
+## ----eval = F, echo = T-------------------------------------------------------
 #  
 #  dir_files = file.path(dir_wili_2018, 'declaration_human_rights')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  lst_files = list.files(dir_files, full.names = T, pattern = '.pdf')
 #  
@@ -395,14 +395,14 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  decl_dat = data.table::rbindlist(decl_dat)
 #  
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  
 #  decl_dat$language
 #  decl_dat$isocode_3_language
 #  decl_dat$isocode_2_language
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  dtbl_res_in = fastText::language_identification(input_obj = decl_dat$text,
 #                                                  pre_trained_language_model_path = file_ftz,
@@ -411,12 +411,12 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                                                  threads = 1,
 #                                                  verbose = TRUE)
 
-## ---- echo = F----------------------------------------------------------------
+## ----echo = F-----------------------------------------------------------------
 #  
 #  dtbl_res_in
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  print_accuracy(size_input_data = length(dtbl_res_in$iso_lang_1),
 #                 true_data = decl_dat$isocode_2_language,
@@ -424,7 +424,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'fastText (.ftz pre-trained model)')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  cld2_vec = cld2::detect_language(text = decl_dat$text,
 #                                   plain_text = TRUE,
@@ -432,7 +432,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  cld2_vec
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  print_accuracy(size_input_data = nrow(decl_dat),
 #                 true_data = decl_dat$isocode_2_language,
@@ -440,13 +440,13 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'cld2')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  cld3_vec = cld3::detect_language(text = decl_dat$text)
 #  cld3_vec
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  print_accuracy(size_input_data = nrow(decl_dat),
 #                 true_data = decl_dat$isocode_2_language,
@@ -454,20 +454,20 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'cld3')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  textc = textcat(x = decl_dat$text, p = textcat::TC_byte_profiles, method = "CT")
 #  textc
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  textc = as.vector(unlist(lapply(strsplit(textc, '-'), function(x) x[1])))
 #  textc = trimws(textc, which = 'both')
 #  textc
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  print_accuracy(size_input_data = nrow(decl_dat),
 #                 true_data = decl_dat$language,
@@ -475,7 +475,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'textcat')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  franc_vec = as.vector(sapply(decl_dat$text, function(x) {
 #    franc(text = x, min_length = 10, max_length = 2048)
@@ -484,7 +484,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  franc_vec
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  print_accuracy(size_input_data = nrow(decl_dat),
 #                 true_data = decl_dat$isocode_3_language,
@@ -492,7 +492,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #                 method = 'franc')
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  dtbl_out = decl_dat[, 1:3]
 #  colnames(dtbl_out) = c('true_y_iso_3', 'true_y_iso_2', 'true_y_language')
@@ -509,7 +509,7 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  dtbl_out
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  lst_files = list.files(dir_files, full.names = F, pattern = '.pdf')
 #  
@@ -564,12 +564,12 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  multilingual_sentence
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  num_languages = 3
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  dtbl_multiling = fastText::language_identification(input_obj = multilingual_sentence,
 #                                                     pre_trained_language_model_path = file_ftz,
@@ -580,17 +580,17 @@ dir_files = '/IN CASE I WANT TO REBUILD THE VIGNETTE MODIFY AND POINT THIS DIR T
 #  dtbl_multiling
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  cld2::detect_language_mixed(text = multilingual_sentence, plain_text = TRUE)$classification
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  cld3::detect_language_mixed(text = multilingual_sentence, size = num_languages)
 #  
 
-## ---- echo = T----------------------------------------------------------------
+## ----echo = T-----------------------------------------------------------------
 #  
 #  # we could use the 'whitelist' parameter but the purpose is to identify languages from unknown text
 #  

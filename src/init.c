@@ -8,18 +8,18 @@
 */
 
 /* .Call calls */
-extern SEXP _fastText_give_args_fasttext(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP _fastText_printAnalogiesUsage(SEXP);
-extern SEXP _fastText_printDumpUsage(SEXP);
-extern SEXP _fastText_printNNUsage(SEXP);
-extern SEXP _fastText_printPredictUsage(SEXP);
-extern SEXP _fastText_printPrintNgramsUsage(SEXP);
-extern SEXP _fastText_printPrintSentenceVectorsUsage(SEXP);
-extern SEXP _fastText_printPrintWordVectorsUsage(SEXP);
-extern SEXP _fastText_printQuantizeUsage(SEXP);
-extern SEXP _fastText_printTestLabelUsage(SEXP);
-extern SEXP _fastText_printTestUsage(SEXP);
-extern SEXP _fastText_printUsage(SEXP);
+extern SEXP _fastText_give_args_fasttext(void *, void *, void *, void *, void *, void *);
+extern SEXP _fastText_printAnalogiesUsage(void *);
+extern SEXP _fastText_printDumpUsage(void *);
+extern SEXP _fastText_printNNUsage(void *);
+extern SEXP _fastText_printPredictUsage(void *);
+extern SEXP _fastText_printPrintNgramsUsage(void *);
+extern SEXP _fastText_printPrintSentenceVectorsUsage(void *);
+extern SEXP _fastText_printPrintWordVectorsUsage(void *);
+extern SEXP _fastText_printQuantizeUsage(void *);
+extern SEXP _fastText_printTestLabelUsage(void *);
+extern SEXP _fastText_printTestUsage(void *);
+extern SEXP _fastText_printUsage(void *);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_fastText_give_args_fasttext",             (DL_FUNC) &_fastText_give_args_fasttext,             6},

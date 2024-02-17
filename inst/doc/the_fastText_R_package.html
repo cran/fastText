@@ -12,30 +12,42 @@
 
 <meta name="author" content="Lampros Mouselimis" />
 
-<meta name="date" content="2022-10-08" />
+<meta name="date" content="2024-02-17" />
 
 <title>Functionality of the fastText R package</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -53,55 +65,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -135,7 +146,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -147,13 +338,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<h1 class="title toc-ignore">Functionality of the fastText R package</h1>
+<h1 class="title toc-ignore">Functionality of the fastText R
+package</h1>
 <h4 class="author">Lampros Mouselimis</h4>
-<h4 class="date">2022-10-08</h4>
+<h4 class="date">2024-02-17</h4>
 
 
 
-<p>This vignette explains the functionality of the fastText R package. This R package is an interface to the <a href="https://github.com/facebookresearch/fastText">fasttext library</a> for efficient learning of word representations and sentence classification. The following functions are included, <br><br></p>
+<p>This vignette explains the functionality of the fastText R package.
+This R package is an interface to the <a href="https://github.com/facebookresearch/fastText">fasttext library</a>
+for efficient learning of word representations and sentence
+classification. The following functions are included, <br><br></p>
 <table>
 <colgroup>
 <col width="31%" />
@@ -172,47 +367,58 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 <tr class="even">
 <td align="center"><strong>plot_progress_logs</strong></td>
-<td align="center">Plot the progress of loss, learning-rate and word-counts</td>
+<td align="center">Plot the progress of loss, learning-rate and
+word-counts</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>printAnalogiesUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘analogies’</td>
+<td align="center">Print Usage Information when the command equals to
+‘analogies’</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>printDumpUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘dump’</td>
+<td align="center">Print Usage Information when the command equals to
+‘dump’</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>printNNUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘nn’</td>
+<td align="center">Print Usage Information when the command equals to
+‘nn’</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>printPredictUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘predict’ or ‘predict-prob’</td>
+<td align="center">Print Usage Information when the command equals to
+‘predict’ or ‘predict-prob’</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>printPrintNgramsUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘print-ngrams’</td>
+<td align="center">Print Usage Information when the command equals to
+‘print-ngrams’</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>printPrintSentenceVectorsUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘print-sentence-vectors’</td>
+<td align="center">Print Usage Information when the command equals to
+‘print-sentence-vectors’</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>printPrintWordVectorsUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘print-word-vectors’</td>
+<td align="center">Print Usage Information when the command equals to
+‘print-word-vectors’</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>printQuantizeUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘quantize’</td>
+<td align="center">Print Usage Information when the command equals to
+‘quantize’</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>printTestLabelUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘test-label’</td>
+<td align="center">Print Usage Information when the command equals to
+‘test-label’</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>printTestUsage</strong></td>
-<td align="center">Print Usage Information when the command equals to ‘test’</td>
+<td align="center">Print Usage Information when the command equals to
+‘test’</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>printUsage</strong></td>
@@ -225,459 +431,508 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 <p><br></p>
-<p>I’ll explain each function separately based on example data. More information can be found in the package documentation.</p>
+<p>I’ll explain each function separately based on example data. More
+information can be found in the package documentation.</p>
 <p><br><br></p>
 <div id="print_parameters" class="section level4">
 <h4>print_parameters</h4>
 <p><br></p>
-<p>This function prints information about the default parameters for a specific ‘command’. The ‘command’ can be for instance <em>supervised</em>, <em>skipgram</em>, <em>cbow</em> etc.,</p>
+<p>This function prints information about the default parameters for a
+specific ‘command’. The ‘command’ can be for instance
+<em>supervised</em>, <em>skipgram</em>, <em>cbow</em> etc.,</p>
 <p><br></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fastText)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print_parameters</span>(<span class="at">command =</span> <span class="st">&quot;supervised&quot;</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Empty input or output path.</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>The following arguments are mandatory<span class="sc">:</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>input              training file path</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>output             output file path</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>The following arguments are optional<span class="sc">:</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>verbose            verbosity level [<span class="dv">2</span>]</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>The following arguments <span class="cf">for</span> the dictionary are optional<span class="sc">:</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>minCount           minimal number of word occurences [<span class="dv">1</span>]</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>minCountLabel      minimal number of label occurences [<span class="dv">0</span>]</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>wordNgrams         max length of word ngram [<span class="dv">1</span>]</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>bucket             number of buckets [<span class="dv">2000000</span>]</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>minn               min length of char ngram [<span class="dv">0</span>]</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>maxn               max length of char ngram [<span class="dv">0</span>]</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>t                  sampling threshold [<span class="fl">0.0001</span>]</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>label              labels prefix [__label__]</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>The following arguments <span class="cf">for</span> training are optional<span class="sc">:</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>lr                 learning rate [<span class="fl">0.1</span>]</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>lrUpdateRate       change the rate of updates <span class="cf">for</span> the learning rate [<span class="dv">100</span>]</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>dim                size of word vectors [<span class="dv">100</span>]</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>ws                 size of the context window [<span class="dv">5</span>]</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>epoch              number of epochs [<span class="dv">5</span>]</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>neg                number of negatives sampled [<span class="dv">5</span>]</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>loss               loss <span class="cf">function</span> {ns, hs, softmax, one<span class="sc">-</span>vs<span class="sc">-</span>all} [softmax]</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>thread             number of threads [<span class="dv">12</span>]</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>pretrainedVectors  pretrained word vectors <span class="cf">for</span> supervised learning []</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>saveOutput         whether output params should be saved [false]</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>The following arguments <span class="cf">for</span> quantization are optional<span class="sc">:</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>cutoff             number of words and ngrams to retain [<span class="dv">0</span>]</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>retrain            whether embeddings are finetuned <span class="cf">if</span> a cutoff is applied [false]</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>qnorm              whether the norm is quantized separately [false]</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>qout               whether the classifier is quantized [false]</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span>dsub               size of each sub<span class="sc">-</span>vector [<span class="dv">2</span>]</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>Error <span class="cf">in</span> <span class="fu">give_args_fasttext</span>(<span class="at">args =</span> <span class="fu">c</span>(<span class="st">&quot;fasttext&quot;</span>, command)) <span class="sc">:</span> </span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  EXIT_FAILURE <span class="sc">--</span> args.cc file <span class="sc">--</span> Args<span class="sc">::</span>parseArgs <span class="cf">function</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(fastText)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">print_parameters</span>(<span class="at">command =</span> <span class="st">&quot;supervised&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>Empty input or output path.</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>The following arguments are mandatory<span class="sc">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="sc">-</span>input              training file path</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  <span class="sc">-</span>output             output file path</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>The following arguments are optional<span class="sc">:</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>  <span class="sc">-</span>verbose            verbosity level [<span class="dv">2</span>]</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>The following arguments <span class="cf">for</span> the dictionary are optional<span class="sc">:</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>  <span class="sc">-</span>minCount           minimal number of word occurences [<span class="dv">1</span>]</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>  <span class="sc">-</span>minCountLabel      minimal number of label occurences [<span class="dv">0</span>]</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>  <span class="sc">-</span>wordNgrams         max length of word ngram [<span class="dv">1</span>]</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>  <span class="sc">-</span>bucket             number of buckets [<span class="dv">2000000</span>]</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>  <span class="sc">-</span>minn               min length of char ngram [<span class="dv">0</span>]</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>  <span class="sc">-</span>maxn               max length of char ngram [<span class="dv">0</span>]</span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>  <span class="sc">-</span>t                  sampling threshold [<span class="fl">0.0001</span>]</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>  <span class="sc">-</span>label              labels prefix [__label__]</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>The following arguments <span class="cf">for</span> training are optional<span class="sc">:</span></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>  <span class="sc">-</span>lr                 learning rate [<span class="fl">0.1</span>]</span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>  <span class="sc">-</span>lrUpdateRate       change the rate of updates <span class="cf">for</span> the learning rate [<span class="dv">100</span>]</span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>  <span class="sc">-</span>dim                size of word vectors [<span class="dv">100</span>]</span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a>  <span class="sc">-</span>ws                 size of the context window [<span class="dv">5</span>]</span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a>  <span class="sc">-</span>epoch              number of epochs [<span class="dv">5</span>]</span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>  <span class="sc">-</span>neg                number of negatives sampled [<span class="dv">5</span>]</span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a>  <span class="sc">-</span>loss               loss <span class="cf">function</span> {ns, hs, softmax, one<span class="sc">-</span>vs<span class="sc">-</span>all} [softmax]</span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a>  <span class="sc">-</span>thread             number of threads [<span class="dv">12</span>]</span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a>  <span class="sc">-</span>pretrainedVectors  pretrained word vectors <span class="cf">for</span> supervised learning []</span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a>  <span class="sc">-</span>saveOutput         whether output params should be saved [false]</span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a>The following arguments <span class="cf">for</span> quantization are optional<span class="sc">:</span></span>
+<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a>  <span class="sc">-</span>cutoff             number of words and ngrams to retain [<span class="dv">0</span>]</span>
+<span id="cb1-40"><a href="#cb1-40" tabindex="-1"></a>  <span class="sc">-</span>retrain            whether embeddings are finetuned <span class="cf">if</span> a cutoff is applied [false]</span>
+<span id="cb1-41"><a href="#cb1-41" tabindex="-1"></a>  <span class="sc">-</span>qnorm              whether the norm is quantized separately [false]</span>
+<span id="cb1-42"><a href="#cb1-42" tabindex="-1"></a>  <span class="sc">-</span>qout               whether the classifier is quantized [false]</span>
+<span id="cb1-43"><a href="#cb1-43" tabindex="-1"></a>  <span class="sc">-</span>dsub               size of each sub<span class="sc">-</span>vector [<span class="dv">2</span>]</span>
+<span id="cb1-44"><a href="#cb1-44" tabindex="-1"></a>Error <span class="cf">in</span> <span class="fu">give_args_fasttext</span>(<span class="at">args =</span> <span class="fu">c</span>(<span class="st">&quot;fasttext&quot;</span>, command)) <span class="sc">:</span> </span>
+<span id="cb1-45"><a href="#cb1-45" tabindex="-1"></a>  EXIT_FAILURE <span class="sc">--</span> args.cc file <span class="sc">--</span> Args<span class="sc">::</span>parseArgs <span class="cf">function</span></span></code></pre></div>
 <p><br><br></p>
 </div>
 <div id="print-usage-functions" class="section level4">
 <h4>Print Usage Functions</h4>
 <p><br></p>
-<p>Each one of the functions which includes the words <em>print</em> and <em>Usage</em> allows a user to print information for this specific function. For instance,</p>
+<p>Each one of the functions which includes the words <em>print</em> and
+<em>Usage</em> allows a user to print information for this specific
+function. For instance,</p>
 <p><br></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">printPredictUsage</span>()</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>usage<span class="sc">:</span> fasttext predict[<span class="sc">-</span>prob] <span class="sc">&lt;</span>model<span class="sc">&gt;</span> <span class="er">&lt;</span>test<span class="sc">-</span>data<span class="sc">&gt;</span> [<span class="sc">&lt;</span>k<span class="sc">&gt;</span>] [<span class="sc">&lt;</span>th<span class="sc">&gt;</span>]</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="sc">&lt;</span>model<span class="sc">&gt;</span>      model filename</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="sc">&lt;</span>test<span class="sc">-</span>data<span class="sc">&gt;</span>  test data <span class="fu">filename</span> (<span class="cf">if</span> <span class="sc">-</span>, read from stdin)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="sc">&lt;</span>k<span class="sc">&gt;</span>          (optional; <span class="dv">1</span> by default) predict top k labels</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="sc">&lt;</span>th<span class="sc">&gt;</span>         (optional; <span class="fl">0.0</span> by default) probability threshold</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    </span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">printPredictUsage</span>()</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>usage<span class="sc">:</span> fasttext predict[<span class="sc">-</span>prob] <span class="sc">&lt;</span>model<span class="sc">&gt;</span> <span class="er">&lt;</span>test<span class="sc">-</span>data<span class="sc">&gt;</span> [<span class="sc">&lt;</span>k<span class="sc">&gt;</span>] [<span class="sc">&lt;</span>th<span class="sc">&gt;</span>]</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="sc">&lt;</span>model<span class="sc">&gt;</span>      model filename</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="sc">&lt;</span>test<span class="sc">-</span>data<span class="sc">&gt;</span>  test data <span class="fu">filename</span> (<span class="cf">if</span> <span class="sc">-</span>, read from stdin)</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="sc">&lt;</span>k<span class="sc">&gt;</span>          (optional; <span class="dv">1</span> by default) predict top k labels</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  <span class="sc">&lt;</span>th<span class="sc">&gt;</span>         (optional; <span class="fl">0.0</span> by default) probability threshold</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>    </span></code></pre></div>
 <p><br><br></p>
 </div>
 <div id="fasttext_interface" class="section level4">
 <h4>fasttext_interface</h4>
 <p><br></p>
-<p>This function allows the user to run the various methods included in the <a href="https://github.com/facebookresearch/fastText">fasttext library</a> from within R. The data that I’ll use in the following code snippets can be downloaded as a .zip file (named as <strong>fastText_data</strong>) from my <a href="https://github.com/mlampros/DataSets">Github repository</a>. The user should then unzip the file and make the extracted folder his / hers default directory (using the base R function <em>setwd()</em>) before running the following code chunks.</p>
+<p>This function allows the user to run the various methods included in
+the <a href="https://github.com/facebookresearch/fastText">fasttext
+library</a> from within R. The data that I’ll use in the following code
+snippets can be downloaded as a .zip file (named as
+<strong>fastText_data</strong>) from my <a href="https://github.com/mlampros/DataSets">Github repository</a>. The
+user should then unzip the file and make the extracted folder his / hers
+default directory (using the base R function <em>setwd()</em>) before
+running the following code chunks.</p>
 <p><br></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&#39;fastText_data&#39;</span>)                  <span class="co"># make the extracted data the default directory</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#------</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># cbow</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#------</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fastText)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;cbow&#39;</span>, </span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lr =</span> <span class="fl">0.1</span>, </span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">dim =</span> <span class="dv">50</span>,</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                   <span class="at">input =</span> <span class="st">&quot;example_text.txt&quot;</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                   <span class="at">output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_vectors&#39;</span>), </span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="dv">2</span>, </span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                   <span class="at">thread =</span> <span class="dv">1</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;cbow_logs.txt&#39;</span>),</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                         <span class="at">MilliSecs =</span> <span class="dv">5</span>,</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                         <span class="at">remove_previous_file =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>                         <span class="at">print_process_time =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>Read 0M words</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>Number of words<span class="sc">:</span>  <span class="dv">8</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>Number of labels<span class="sc">:</span> <span class="dv">0</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>Progress<span class="sc">:</span> <span class="fl">100.0</span>% words<span class="sc">/</span>sec<span class="sc">/</span>thread<span class="sc">:</span>    <span class="dv">2933</span> lr<span class="sc">:</span>  <span class="fl">0.000000</span> loss<span class="sc">:</span>  <span class="fl">4.060542</span> ETA<span class="sc">:</span>   0h 0m</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>time to complete <span class="sc">:</span> <span class="fl">3.542332</span> secs </span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&#39;fastText_data&#39;</span>)                  <span class="co"># make the extracted data the default directory</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#------</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># cbow</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#------</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="fu">library</span>(fastText)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;cbow&#39;</span>, </span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>                   <span class="at">lr =</span> <span class="fl">0.1</span>, </span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>                   <span class="at">dim =</span> <span class="dv">50</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>                   <span class="at">input =</span> <span class="st">&quot;example_text.txt&quot;</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>                   <span class="at">output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_vectors&#39;</span>), </span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="dv">2</span>, </span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>                   <span class="at">thread =</span> <span class="dv">1</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;cbow_logs.txt&#39;</span>),</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>                         <span class="at">MilliSecs =</span> <span class="dv">5</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>                         <span class="at">remove_previous_file =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>                         <span class="at">print_process_time =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>Read 0M words</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>Number of words<span class="sc">:</span>  <span class="dv">8</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>Number of labels<span class="sc">:</span> <span class="dv">0</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>Progress<span class="sc">:</span> <span class="fl">100.0</span>% words<span class="sc">/</span>sec<span class="sc">/</span>thread<span class="sc">:</span>    <span class="dv">2933</span> lr<span class="sc">:</span>  <span class="fl">0.000000</span> loss<span class="sc">:</span>  <span class="fl">4.060542</span> ETA<span class="sc">:</span>   0h 0m</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>time to complete <span class="sc">:</span> <span class="fl">3.542332</span> secs </span></code></pre></div>
 <p><br></p>
-<p><strong>The data is saved in the specified <em>tempdir()</em> folder for illustration purposes. The user is advised to specify his / her own folder.</strong></p>
+<p><strong>The data is saved in the specified <em>tempdir()</em> folder
+for illustration purposes. The user is advised to specify his / her own
+folder.</strong></p>
 <p><br></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#-----------</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># supervised</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#-----------</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;supervised&#39;</span>, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lr =</span> <span class="fl">0.1</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">dim =</span> <span class="dv">50</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">input =</span> <span class="fu">file.path</span>(<span class="st">&quot;cooking.stackexchange&quot;</span>, <span class="st">&quot;cooking.train&quot;</span>),</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking&#39;</span>), </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="dv">2</span>, </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">thread =</span> <span class="dv">4</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;sup_logs.txt&#39;</span>),</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                         <span class="at">MilliSecs =</span> <span class="dv">5</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                         <span class="at">remove_previous_file =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>                         <span class="at">print_process_time =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>Read 0M words</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>Number of words<span class="sc">:</span>  <span class="dv">14543</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>Number of labels<span class="sc">:</span> <span class="dv">735</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>Progress<span class="sc">:</span> <span class="fl">100.0</span>% words<span class="sc">/</span>sec<span class="sc">/</span>thread<span class="sc">:</span>   <span class="dv">63282</span> lr<span class="sc">:</span>  <span class="fl">0.000000</span> loss<span class="sc">:</span> <span class="fl">10.049338</span> ETA<span class="sc">:</span>   0h 0m</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>time to complete <span class="sc">:</span> <span class="fl">3.449003</span> secs </span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#-----------</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># supervised</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#-----------</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;supervised&#39;</span>, </span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>                   <span class="at">lr =</span> <span class="fl">0.1</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>                   <span class="at">dim =</span> <span class="dv">50</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>                   <span class="at">input =</span> <span class="fu">file.path</span>(<span class="st">&quot;cooking.stackexchange&quot;</span>, <span class="st">&quot;cooking.train&quot;</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>                   <span class="at">output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking&#39;</span>), </span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="dv">2</span>, </span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>                   <span class="at">thread =</span> <span class="dv">4</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;sup_logs.txt&#39;</span>),</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>                         <span class="at">MilliSecs =</span> <span class="dv">5</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>                         <span class="at">remove_previous_file =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>                         <span class="at">print_process_time =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>Read 0M words</span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>Number of words<span class="sc">:</span>  <span class="dv">14543</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>Number of labels<span class="sc">:</span> <span class="dv">735</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>Progress<span class="sc">:</span> <span class="fl">100.0</span>% words<span class="sc">/</span>sec<span class="sc">/</span>thread<span class="sc">:</span>   <span class="dv">63282</span> lr<span class="sc">:</span>  <span class="fl">0.000000</span> loss<span class="sc">:</span> <span class="fl">10.049338</span> ETA<span class="sc">:</span>   0h 0m</span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>time to complete <span class="sc">:</span> <span class="fl">3.449003</span> secs </span></code></pre></div>
 <p><br></p>
-<p>The user has here also the option to plot the progress of <em>loss</em>, <em>learning-rate</em> and <em>word-counts</em>,</p>
+<p>The user has here also the option to plot the progress of
+<em>loss</em>, <em>learning-rate</em> and <em>word-counts</em>,</p>
 <p><br></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">plot_progress_logs</span>(<span class="at">path =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;sup_logs.txt&#39;</span>), </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">plot =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(res)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">plot_progress_logs</span>(<span class="at">path =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;sup_logs.txt&#39;</span>), </span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>                         <span class="at">plot =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">dim</span>(res)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span></code></pre></div>
 <p><br></p>
 <p><img src="data:image/png;base64,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4WhMBDkqSuY42WYjUazMzq4aO1bvnAGgNjRuQ7hqoDyvXLly9uzZr776art27SZOnDho0KAXXnihoqIiLy+vZfLTibtfP3e/fjU62u320tJSImIOB1VVsfJyJknsyhWSJFZayjweVlFBTidzOlllJblcrKyMeb2m//s/w+efozwDBIREEifjJB2EoQbK81NPPfXkk09mZWW9+OKL8fHxr7/++quvvvrnP/851MuzOtlsJrNZjopqzMDiO+/onQ+AJpxO5+LFi3/44QflFufhw4dfd911ubm5FouFiBYuXBjg/JoF554hXDXwq/Onn34aOnQoY2z37t0ZGRmMsaSkpAsXLrRMcgCgoT//+c9//etfBwwYoPx73333vfHGG//v//0/5d/BgwerjHvu3Lm5c+fefffdjzzyyMWLF5s66SNHjsyYMWPSpElPP/20y+Wq3uvw4cNTpkxpakAfPHMbwlUDm3WXLl22b99++vTpN99888477ySiffv2tW/fXn0sSZLuv/9+paG4Oj/3QwDwxyuvvLJq1SrfPnjXXXetWLHilVdeaXBESZKWLFkyfvz4TZs2de7cuanPF6usrFy5cuWcOXOee+658vLyHTt2+Hr9+OOP69evl2W5SQF/lRvOPUOYaqA8L168eM2aNcnJyWlpab17937iiSfmzJnzpz/9SWWUXbt2zZs3r6ioqEZ3//dDAPCHJEnJycnVu3To0KExb4M+duxYbGxsr169OI6bOHHifffdp3Tfv3//9OnTJ0+evGTJEpVD6sOHD19zzTWJiYk8z996662HDh1Survd7ry8vPHjx/sxTyjPELYaOPc8ZsyYkydPnjp1ql+/fkQ0cODA999/f9iwYSqjJCQkjBs3TnmBnY9vP9y2bZv/SQNAMwwdOnTx4sUvv/xymzZtiKikpOTxxx8fMmRIgyMWFRVZLJbHH3/8+++/79Spk3L8ffbs2W3btuXm5trt9p07d+bl5eXm5vpGmT17tu8KleLi4ri4OOVzXFxccXGx8nnjxo2DBg3q1q1bjckdOXLEV8JHjx4dGxtbX2I8z0skibxotVobuRAag+d5bQMqRFHkNb0n02AwMMa0PebhOI4xpu3sKzH1mHfNV5MgCJrPOxGZzWaV1eTxeOpOpsHo//nPf5KSkqxWq+/GqgEDBqjcWNWzZ08iqrEm6tsPv/322xMn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N5lMERERERERgYGBL774osFg+OKLL9atWzdhwoRNmzadPXs2Pj7+rbfectvone0G6KPwlvdL2LnthzIyMliWDQ0N3bhxo8lkWrp0qcsCd911V0xMzIIFC7gTN9asWTNq1KiEhASLxfL000+npKQ888wz165dy8rKYhiGYRiX1UeNGpWUlLRo0aLc3FypVLpx48Zvvvlm2LBhV69efe655xQKRUJCwoULF06dOvXII4/Y7fb2jT0zDgB9BN7y/snXB79BSNx5Ivv374+JidFoNFOmTCktLeVmyeXygoIC55IGg2HRokUhISEhISGLFy82GAxce2Vl5bRp03Q6XVxcXElJCU3TRqOx/ep1dXW/+c1vBgwYEBAQcP/993OngbAsm5OTExERIZPJBg0atGrVKrPZ3FEjANw8vOX9GMWyrK//QgDBnDp1asyYMSaTSaFQdGN1g8Fw7NixefPmcYejvv7667i4uMbGRpcjUgAgEnjL+zG8BvAzKSkpGzdurKmp+e9///v4448//PDDeKMC+DG85UULLwP8JCwsbN++ff/85z9HjBhxzz333HbbbdyRKgDwS3jLixl2bgMAAIgOvj0DAACIDuIZAABAdBDPAAAAooN4BgAAEB3EMwAAgOggngEAAEQH8QwAACA6iGcAAADRQTwDAACIDuIZAABAdBDPAAAAooN4BgAAEB3EMwAAgOggngEAAEQH8Qxu2O32hx9+WKPRPP/88+3njh8/fvHixT1fVWBg4KBBg3r+eQEAeh7iGdzYt2/f9u3bFyxYcP/99/u6lp/069cvKCjI11W4OnLkyPr1631dBQD4G8QzuHHhwgVCyOuvv37nnXf6upafXLhw4cyZM76uwhXiGQC8AfEMbrAsSwiRy+W+LgQAoI9CPLthNpspivroo49ef/31sWPHBgUFTZ8+/eTJk84F4uPjf//73xcXF0+cOPHBBx/kGj///POEhITAwMDIyMhf//rX169fb9vn3//+94kTJwYGBs6cObOsrCwhIeHRRx/l6a2srOy+++4LCQkJDg5+4IEHysvLnV1dv3798ccfj4iIUCqVt99++1tvvdWZWe11VHBycvLq1asJIVKpNDMz0+Nw8ZTKsuxf/vKXO+64Q61W9+/ff9q0aUVFRTzDGB8fn5qaWlpaOmHCBKVSeeutt27durXt8snJyc5pniX5B5xf+6p4tiIhIeHll19ubm6mKCo7O9vjgAAAdBLiuUN//vOfn3vuubi4uIceeqi0tDQ+Pr5tQtfU1MybN89kMo0bN44Q8uGHH95zzz3ff/99enp6UlLSzp07x44d29jYyC28devWlJQUiUTy+9//XiqVTps27fLly22fy6W3r776asKECVVVVStWrHjooYcOHz4cFxd37tw5buFf/vKXb7/99qRJk1atWiWTyZYvX56Xl+dxlguegl9++eXHHnuMEPLpp58uX76cf5T4S922bdvjjz8eGhr6zDPPJCcnl5WVzZo1q+0fLi4bTgi5dOnSAw88cPfdd2/cuFGj0aSlpR06dMjtU/Ms6XHA+blUxbMVubm5Dz30kFwuz8/P506X4x8QAIDOYqEdk8lECGEY5tSpU1xLVVWVWq2eM2cO93Dy5MmEkDfeeIN7aLFYhg0bdscddzQ1NXEtn3/+OSFk/fr1LMs2NTXp9foZM2ZYrVaWZR0OR3p6OiFk2bJlbntzOBxTpkwZN26c2WzmWs6fP6/VahcvXsyy7NWrVwkhWVlZ3Cyz2Tx06NAnnniCf5YL/oJZlt24cSMhhCu4vXHjxi1atMhjqSzLTps2LSYmxm63cw+5+MzPz3e74c6WTz75hHtoMBgoinr66aedc+fOnetxSY8Dzq99Vfxb8eKLL6rVam7a44AAAHQSvj13aO7cuTExMdx0ZGTkww8//K9//ctms3EtERERK1as4KarqqouXLiQkZGhVqu5lmnTpo0bN+7AgQOEkOLi4u+///7JJ5+USCSEEIqiuF3HbbXt7fr160ePHl26dKnJZKqvr6+vr+/Xr9+9995bUFBACOE6OXz4MPftTS6XX7hw4c9//jP/LBf8BXcef6mEkJ07dx45coSmf/hvxn07N5vNbjecc+utt86cOZObDg0NDQsLa2lpcfvsHS3ZmQHn51KVx63o/IAAAHSSxNcFiJczm50P7XZ7TU1NREQEIeTWW2+lKIqbxZ3nHB0d3Xb56Ojow4cPO+dGRUU5Z4WHh6tUqrYLt+2tqqqKEPLEE0888cQTbZehaZpl2eDg4Oeee27t2rW33HLLtGnTEhMTFyxYMHjwYEIIzywX/AV3Hn+pFEXp9fqKioq8vLySkpLjx4+3PTrQfsPdtjhDsb2OluzMgPNz6dnjVjh5HJDO1wAAfRziuUPcdy8nhmEIIVarlXvo/N5JfjzP2QXDMNzCFovF7dy2D9v2xq2VlZU1adIkl7W4j/hXXnll0aJFH3744cGDB5966qk1a9a89tprv/3tbwkhPLNc+uEpuPM8lrphw4ann346MjJyzpw5q1evDgwMvPfeezvacE7nTxfvaMnODDg/l6o8boWTxwHpfA0A0MchnjvkcsLt6dOnaZoeMmRI+yWHDh3KLT9x4kRn49mzZ2+99VZCCPfvN998c8stt3CzDAaD86yx9iIjIwkhSqUyISHB2Xjq1CmLxULT9PXr1y9fvnzbbbe99NJLL730Uk1NzS9/+csnn3xy+fLlDQ0NHc1y+VODv+DO4y+1rq7umWeeeeGFF1588UUumf797393qf/u6eqA8+vSVvAPSPcKAIC+CR8ZHdq1a1dlZSU3feHChXfeeWfatGkymaz9kiNGjBg6dOjmzZudR0kPHTr01Vdfcd+xYmNjdTpdbm6u3W7n5v7pT3/ied4BAwbExMS8/vrrTU1NXMu33347derUnTt3EkL+/e9/jxkzZteuXdysQYMGcVcOYVmWZ1aXCu48/lIrKysdDsfIkSO5VGNZlvvtk8Ph6NKzdFVXB5xfZ7bC4XBwg8w/IAAAnYdvzx3S6/WxsbEPPvggy7J/+9vfrFbrunXr3C4plUqzs7MXL148YcKEefPmff/99+++++7gwYMzMjIIIUFBQS+88EJmZmZCQkJSUtLp06dLSkpGjBjhNukJIRRF5ebmzpgxY/To0YsWLTIajXv37lUqlU8++SQhJC4ubuDAgenp6fn5+ZGRkf/5z38++eSTpUuXSqVSnlldKrjz+EuNjo4ODg5euXJlYWFh//79P/3005aWFpqmc3JywsPDx4wZ06Xn6ryuDjg/j1shk8lMJlNOTs706dNHjx7NMyAAAJ2Hb88deuqpp/7whz/k5+e/9957MTExRUVFPFe4XLhw4aefftqvX78tW7YcPHhwyZIlJSUlWq2Wm/vkk0+++eabN27ceO2111iWPXr0qFKpDAkJ6ag37sIXERERW7du3bt371133VVUVMTdDUKn03366adTpkz59NNPs7OzKysrX3755b/85S/8s7pacOfxlKrRaPbv3z9ixIjt27d/+OGHU6dOPXny5AsvvFBRUfG///2vq0/UJV0dcB4et+KXv/zl5MmTX3jhhaNHjxLeAQEA6DzK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" /></p>
 <p><br></p>
 <p>The verbosity for the logs-file depends on,</p>
 <ul>
-<li>the <em>‘MilliSecs’</em> (higher leads to fewer logs-lines in the file) and</li>
-<li>the <em>‘thread’</em> (greater than 1 fewer logs-lines in the file)</li>
+<li>the <em>‘MilliSecs’</em> (higher leads to fewer logs-lines in the
+file) and</li>
+<li>the <em>‘thread’</em> (greater than 1 fewer logs-lines in the
+file)</li>
 </ul>
 <p>parameters.</p>
 <p><br></p>
-<p>The next command can be utilized to <em>‘predict’</em> new data based on the output model,</p>
+<p>The next command can be utilized to <em>‘predict’</em> new data based
+on the output model,</p>
 <p><br></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;predict&#39; function</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#-------------------</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;predict&#39;</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">test_data =</span> <span class="fu">file.path</span>(<span class="st">&#39;cooking.stackexchange&#39;</span>, <span class="st">&#39;cooking.valid&#39;</span>), </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">1</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">th =</span> <span class="fl">0.0</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;predict_valid.txt&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#-------------------</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co"># &#39;predict&#39; function</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#-------------------</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;predict&#39;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>                   <span class="at">test_data =</span> <span class="fu">file.path</span>(<span class="st">&#39;cooking.stackexchange&#39;</span>, <span class="st">&#39;cooking.valid&#39;</span>), </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">1</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>                   <span class="at">th =</span> <span class="fl">0.0</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;predict_valid.txt&#39;</span>))</span></code></pre></div>
 <p><br></p>
-<p>These output predictions will be of the following form ’__label__food-safety’ , where each line will represent a new label (number of lines of the input data must match the number of lines of the output data). With the <em>‘predict-prob’</em> command someone can obtain the probabilities of the labels as well,</p>
+<p>These output predictions will be of the following form
+’__label__food-safety’ , where each line will represent a new label
+(number of lines of the input data must match the number of lines of the
+output data). With the <em>‘predict-prob’</em> command someone can
+obtain the probabilities of the labels as well,</p>
 <p><br></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#------------------------</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;predict-prob&#39; function</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#------------------------</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;predict-prob&#39;</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">test_data =</span> <span class="fu">file.path</span>(<span class="st">&#39;cooking.stackexchange&#39;</span>, <span class="st">&#39;cooking.valid&#39;</span>), </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">1</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">th =</span> <span class="fl">0.0</span>)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;predict_valid_prob.txt&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#------------------------</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># &#39;predict-prob&#39; function</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#------------------------</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;predict-prob&#39;</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>                   <span class="at">test_data =</span> <span class="fu">file.path</span>(<span class="st">&#39;cooking.stackexchange&#39;</span>, <span class="st">&#39;cooking.valid&#39;</span>), </span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">1</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>                   <span class="at">th =</span> <span class="fl">0.0</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;predict_valid_prob.txt&#39;</span>))</span></code></pre></div>
 <p><br></p>
-<p>Using <em>‘predict-prob’</em> the output predictions will be of the following form ’__label__baking 0.0282927’</p>
+<p>Using <em>‘predict-prob’</em> the output predictions will be of the
+following form ’__label__baking 0.0282927’</p>
 <p><br></p>
-<p>Once the model was trained, someone can evaluate it by computing the precision and recall at ‘k’ on a test set. The ‘test’ command just prints the metrics in the R session,</p>
+<p>Once the model was trained, someone can evaluate it by computing the
+precision and recall at ‘k’ on a test set. The ‘test’ command just
+prints the metrics in the R session,</p>
 <p><br></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;test&#39; function</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;test&#39;</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">test_data =</span> <span class="fu">file.path</span>(<span class="st">&#39;cooking.stackexchange&#39;</span>, <span class="st">&#39;cooking.valid&#39;</span>),</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">1</span>,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">th =</span> <span class="fl">0.0</span>)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>N   <span class="dv">3000</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>P<span class="sc">@</span><span class="dv">1</span> <span class="fl">0.138</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>R<span class="sc">@</span><span class="dv">1</span> <span class="fl">0.060</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#----------------</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co"># &#39;test&#39; function</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#----------------</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;test&#39;</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>                   <span class="at">test_data =</span> <span class="fu">file.path</span>(<span class="st">&#39;cooking.stackexchange&#39;</span>, <span class="st">&#39;cooking.valid&#39;</span>),</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">1</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>                   <span class="at">th =</span> <span class="fl">0.0</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params)</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>N   <span class="dv">3000</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>P<span class="sc">@</span><span class="dv">1</span> <span class="fl">0.138</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>R<span class="sc">@</span><span class="dv">1</span> <span class="fl">0.060</span></span></code></pre></div>
 <p><br></p>
 <p>whereas the ‘test-label’ command allows the user to save,</p>
 <p><br></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------------</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;test-label&#39; function</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------------</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;test-label&#39;</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">test_data =</span> <span class="fu">file.path</span>(<span class="st">&#39;cooking.stackexchange&#39;</span>, <span class="st">&#39;cooking.valid&#39;</span>),</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">1</span>,</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">th =</span> <span class="fl">0.0</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;test_label_valid.txt&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#----------------------</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co"># &#39;test-label&#39; function</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#----------------------</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;test-label&#39;</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>                   <span class="at">test_data =</span> <span class="fu">file.path</span>(<span class="st">&#39;cooking.stackexchange&#39;</span>, <span class="st">&#39;cooking.valid&#39;</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">1</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>                   <span class="at">th =</span> <span class="fl">0.0</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;test_label_valid.txt&#39;</span>))</span></code></pre></div>
 <p><br></p>
-<p>the output to the <em>‘test_label_valid.txt’</em> file, which includes the ‘Precision’ and ‘Recall’ for each unique label on the data set (<em>‘cooking.stackexchange.txt’</em>). That means the number of rows of the <em>‘test_label_valid.txt’</em> must be equal to the unique labels in the <em>‘cooking.stackexchange.txt’</em> data set. This can be verified using the following code snippet,</p>
+<p>the output to the <em>‘test_label_valid.txt’</em> file, which
+includes the ‘Precision’ and ‘Recall’ for each unique label on the data
+set (<em>‘cooking.stackexchange.txt’</em>). That means the number of
+rows of the <em>‘test_label_valid.txt’</em> must be equal to the unique
+labels in the <em>‘cooking.stackexchange.txt’</em> data set. This can be
+verified using the following code snippet,</p>
 <p><br></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>st_dat <span class="ot">=</span> <span class="fu">read.delim</span>(<span class="fu">file.path</span>(<span class="st">&quot;cooking.stackexchange&quot;</span>, <span class="st">&quot;cooking.stackexchange.txt&quot;</span>), </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>res_stackexch <span class="ot">=</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(st_dat), <span class="cf">function</span>(y)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">strsplit</span>(st_dat[y, ], <span class="st">&quot; &quot;</span>)[[<span class="dv">1</span>]][<span class="fu">which</span>(<span class="fu">sapply</span>(<span class="fu">strsplit</span>(st_dat[y, ], <span class="st">&quot; &quot;</span>)[[<span class="dv">1</span>]], <span class="cf">function</span>(x)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">substr</span>(x, <span class="dv">1</span>, <span class="dv">9</span>) <span class="sc">==</span> <span class="st">&quot;__label__&quot;</span>) <span class="sc">==</span> T)])</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>test_label_valid <span class="ot">=</span> <span class="fu">read.table</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;test_label_valid.txt&#39;</span>), </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                              <span class="at">quote=</span><span class="st">&quot;</span><span class="sc">\&quot;</span><span class="st">&quot;</span>, <span class="at">comment.char=</span><span class="st">&quot;&quot;</span>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># number of unique labels of data equal to the rows of the &#39;test_label_valid.txt&#39; file</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(res_stackexch)) <span class="sc">==</span> <span class="fu">nrow</span>(test_label_valid)             </span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">TRUE</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(test_label_valid)</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        V1 V2       V3        V4 V5       V6     V7 V8       V9                    V10</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.234244</span> Precision  <span class="sc">:</span> <span class="fl">0.139535</span> Recall  <span class="sc">:</span> <span class="fl">0.729167</span>        __label__baking</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.227746</span> Precision  <span class="sc">:</span> <span class="fl">0.132571</span> Recall  <span class="sc">:</span> <span class="fl">0.807377</span>   __label__food<span class="sc">-</span>safety</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="dv">3</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.058824</span> Precision  <span class="sc">:</span> <span class="fl">0.750000</span> Recall  <span class="sc">:</span> <span class="fl">0.030612</span> __label__substitutions</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.000000</span> Precision  <span class="sc">:</span> <span class="sc">--------</span> Recall  <span class="sc">:</span> <span class="fl">0.000000</span>     __label__equipment</span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="dv">5</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.017699</span> Precision  <span class="sc">:</span> <span class="fl">1.000000</span> Recall  <span class="sc">:</span> <span class="fl">0.008929</span>         __label__bread</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.000000</span> Precision  <span class="sc">:</span> <span class="sc">--------</span> Recall  <span class="sc">:</span> <span class="fl">0.000000</span>       __label__chicken</span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>.....</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>st_dat <span class="ot">=</span> <span class="fu">read.delim</span>(<span class="fu">file.path</span>(<span class="st">&quot;cooking.stackexchange&quot;</span>, <span class="st">&quot;cooking.stackexchange.txt&quot;</span>), </span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>                    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>res_stackexch <span class="ot">=</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(st_dat), <span class="cf">function</span>(y)</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  </span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>  <span class="fu">strsplit</span>(st_dat[y, ], <span class="st">&quot; &quot;</span>)[[<span class="dv">1</span>]][<span class="fu">which</span>(<span class="fu">sapply</span>(<span class="fu">strsplit</span>(st_dat[y, ], <span class="st">&quot; &quot;</span>)[[<span class="dv">1</span>]], <span class="cf">function</span>(x)</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>    </span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>    <span class="fu">substr</span>(x, <span class="dv">1</span>, <span class="dv">9</span>) <span class="sc">==</span> <span class="st">&quot;__label__&quot;</span>) <span class="sc">==</span> T)])</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>)</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>test_label_valid <span class="ot">=</span> <span class="fu">read.table</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;test_label_valid.txt&#39;</span>), </span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>                              <span class="at">quote=</span><span class="st">&quot;</span><span class="sc">\&quot;</span><span class="st">&quot;</span>, <span class="at">comment.char=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co"># number of unique labels of data equal to the rows of the &#39;test_label_valid.txt&#39; file</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(res_stackexch)) <span class="sc">==</span> <span class="fu">nrow</span>(test_label_valid)             </span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>[<span class="dv">1</span>] <span class="cn">TRUE</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="fu">head</span>(test_label_valid)</span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a>        V1 V2       V3        V4 V5       V6     V7 V8       V9                    V10</span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a><span class="dv">1</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.234244</span> Precision  <span class="sc">:</span> <span class="fl">0.139535</span> Recall  <span class="sc">:</span> <span class="fl">0.729167</span>        __label__baking</span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a><span class="dv">2</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.227746</span> Precision  <span class="sc">:</span> <span class="fl">0.132571</span> Recall  <span class="sc">:</span> <span class="fl">0.807377</span>   __label__food<span class="sc">-</span>safety</span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a><span class="dv">3</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.058824</span> Precision  <span class="sc">:</span> <span class="fl">0.750000</span> Recall  <span class="sc">:</span> <span class="fl">0.030612</span> __label__substitutions</span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a><span class="dv">4</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.000000</span> Precision  <span class="sc">:</span> <span class="sc">--------</span> Recall  <span class="sc">:</span> <span class="fl">0.000000</span>     __label__equipment</span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a><span class="dv">5</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.017699</span> Precision  <span class="sc">:</span> <span class="fl">1.000000</span> Recall  <span class="sc">:</span> <span class="fl">0.008929</span>         __label__bread</span>
+<span id="cb10-27"><a href="#cb10-27" tabindex="-1"></a><span class="dv">6</span> F1<span class="sc">-</span>Score  <span class="sc">:</span> <span class="fl">0.000000</span> Precision  <span class="sc">:</span> <span class="sc">--------</span> Recall  <span class="sc">:</span> <span class="fl">0.000000</span>       __label__chicken</span>
+<span id="cb10-28"><a href="#cb10-28" tabindex="-1"></a>.....</span></code></pre></div>
 <p><br></p>
-<p>The user can also <em>‘quantize’</em> a supervised model to reduce its memory usage with the following command,</p>
+<p>The user can also <em>‘quantize’</em> a supervised model to reduce
+its memory usage with the following command,</p>
 <p><br></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#---------------------</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;quantize&#39; function</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#---------------------</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;quantize&#39;</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">input =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking&#39;</span>)) </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params)</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">list.files</span>(<span class="fu">tempdir</span>(), <span class="at">pattern =</span> <span class="st">&#39;.ftz&#39;</span>))</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;model_cooking.ftz&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#---------------------</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co"># &#39;quantize&#39; function</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#---------------------</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;quantize&#39;</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>                   <span class="at">input =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>                   <span class="at">output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking&#39;</span>)) </span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params)</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">list.files</span>(<span class="fu">tempdir</span>(), <span class="at">pattern =</span> <span class="st">&#39;.ftz&#39;</span>))</span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>[<span class="dv">1</span>] <span class="st">&quot;model_cooking.ftz&quot;</span></span></code></pre></div>
 <p><br></p>
 <p>The quantize function is currenlty (as of 01/02/2019) <a href="https://github.com/facebookresearch/fastText/issues/353#issuecomment-342501742">single-threaded</a>.</p>
 <p><br></p>
-<p>Based on the <em>‘queries.txt’</em> text file the user can save the word vectors to a file using the following command ( one vector per line ),</p>
+<p>Based on the <em>‘queries.txt’</em> text file the user can save the
+word vectors to a file using the following command ( one vector per line
+),</p>
 <p><br></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------------------</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># print-word-vectors function</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------------------</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;print-word-vectors&#39;</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>))</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_input =</span> <span class="st">&#39;queries.txt&#39;</span>,</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_vecs_queries.txt&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#----------------------------</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co"># print-word-vectors function</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#----------------------------</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;print-word-vectors&#39;</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>))</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params,</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>                         <span class="at">path_input =</span> <span class="st">&#39;queries.txt&#39;</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_vecs_queries.txt&#39;</span>))</span></code></pre></div>
 <p><br></p>
-<p>To compute vector representations of sentences or paragraphs use the following command,</p>
+<p>To compute vector representations of sentences or paragraphs use the
+following command,</p>
 <p><br></p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#--------------------------------</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># print-sentence-vectors function</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#--------------------------------</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fastText)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;print-sentence-vectors&#39;</span>,</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>))</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params,</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_input =</span> <span class="st">&#39;text_sentence.txt&#39;</span>,</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_sentence_queries.txt&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co">#--------------------------------</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># print-sentence-vectors function</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#--------------------------------</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="fu">library</span>(fastText)</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;print-sentence-vectors&#39;</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>))</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params,</span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>                         <span class="at">path_input =</span> <span class="st">&#39;text_sentence.txt&#39;</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_sentence_queries.txt&#39;</span>))</span></code></pre></div>
 <p><br></p>
-<p>Be aware that for the <em>‘print-sentence-vectors’</em> the <em>‘word_sentence_queries.txt’</em> file should consist of sentences of the following form,</p>
+<p>Be aware that for the <em>‘print-sentence-vectors’</em> the
+<em>‘word_sentence_queries.txt’</em> file should consist of sentences of
+the following form,</p>
 <p><br></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>How much does potato starch affect a cheese sauce recipe<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>Dangerous pathogens capable of growing <span class="cf">in</span> acidic environments<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>How do I cover up the white spots on my cast iron stove<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>How do I cover up the white spots on my cast iron stove<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>Michelin Three Star Restaurant but <span class="cf">if</span> the chef is not there<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>......</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>How much does potato starch affect a cheese sauce recipe<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>Dangerous pathogens capable of growing <span class="cf">in</span> acidic environments<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>How do I cover up the white spots on my cast iron stove<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>How do I cover up the white spots on my cast iron stove<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>Michelin Three Star Restaurant but <span class="cf">if</span> the chef is not there<span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>......</span></code></pre></div>
 <p><br></p>
-<p>Therefore each line should end in <strong>EOS (end of sentence </s>)</strong> and that if at the end of the file a <strong>newline</strong> exists then the function will return an additional word vector. Thus the user should <strong>make sure</strong> that the input file does <strong>not</strong> include empty lines at the end of the file.</p>
+<p>Therefore each line should end in <strong>EOS (end of sentence
+</s>)</strong> and that if at the end of the file a
+<strong>newline</strong> exists then the function will return an
+additional word vector. Thus the user should <strong>make sure</strong>
+that the input file does <strong>not</strong> include empty lines at the
+end of the file.</p>
 <p><br></p>
-<p>The <em>‘print-ngrams’</em> command prints the n-grams of a word in the R session or saves the n-grams to a file. But first the user should save the model and word-vectors with n-grams enabled (<em>minn</em>, <em>maxn</em> parameters)</p>
+<p>The <em>‘print-ngrams’</em> command prints the n-grams of a word in
+the R session or saves the n-grams to a file. But first the user should
+save the model and word-vectors with n-grams enabled (<em>minn</em>,
+<em>maxn</em> parameters)</p>
 <p><br></p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------------------------------</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;skipgram&#39; function with n-gram enabled</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------------------------------</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;skipgram&#39;</span>, </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lr =</span> <span class="fl">0.1</span>,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">dim =</span> <span class="dv">50</span>,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">input =</span> <span class="st">&quot;example_text.txt&quot;</span>,</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_vectors&#39;</span>),</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="dv">2</span>, </span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">thread =</span> <span class="dv">1</span>,</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>                   <span class="at">minn =</span> <span class="dv">2</span>, </span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>                   <span class="at">maxn =</span> <span class="dv">2</span>)</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;skipgram_logs.txt&#39;</span>),</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>                         <span class="at">MilliSecs =</span> <span class="dv">5</span>)</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">#-----------------------</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;print-ngram&#39; function</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="co">#-----------------------</span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;print-ngrams&#39;</span>,</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_vectors.bin&#39;</span>),</span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>                   <span class="at">word =</span> <span class="st">&#39;word&#39;</span>)</span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="co"># save output to file</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;ngrams.txt&#39;</span>))</span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>                         </span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="co">#  print output to console</span></span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="st">&quot;&quot;</span>)      </span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a><span class="co"># truncated output for the &#39;word&#39; query</span></span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="co">#--------------------------------------</span></span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="sc">&lt;</span>w <span class="sc">-</span><span class="fl">0.00983</span> <span class="fl">0.00178</span> <span class="fl">0.01929</span> <span class="fl">0.00994</span> ......</span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>wo <span class="fl">0.01114</span> <span class="fl">0.01570</span> <span class="fl">0.01294</span> <span class="fl">0.01284</span> ......</span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>or <span class="sc">-</span><span class="fl">0.01035</span> <span class="sc">-</span><span class="fl">0.01585</span> <span class="sc">-</span><span class="fl">0.01671</span> <span class="sc">-</span><span class="fl">0.00043</span> ......</span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>rd <span class="fl">0.01840</span> <span class="sc">-</span><span class="fl">0.00378</span> <span class="sc">-</span><span class="fl">0.01468</span> <span class="fl">0.01088</span> ......</span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>d<span class="sc">&gt;</span> <span class="fl">0.00749</span> <span class="fl">0.00720</span> <span class="fl">0.01171</span> <span class="fl">0.01258</span>  ......</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#----------------------------------------</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co"># &#39;skipgram&#39; function with n-gram enabled</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#----------------------------------------</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;skipgram&#39;</span>, </span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>                   <span class="at">lr =</span> <span class="fl">0.1</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>                   <span class="at">dim =</span> <span class="dv">50</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>                   <span class="at">input =</span> <span class="st">&quot;example_text.txt&quot;</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>                   <span class="at">output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_vectors&#39;</span>),</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="dv">2</span>, </span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>                   <span class="at">thread =</span> <span class="dv">1</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>                   <span class="at">minn =</span> <span class="dv">2</span>, </span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>                   <span class="at">maxn =</span> <span class="dv">2</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;skipgram_logs.txt&#39;</span>),</span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>                         <span class="at">MilliSecs =</span> <span class="dv">5</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="co">#-----------------------</span></span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a><span class="co"># &#39;print-ngram&#39; function</span></span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="co">#-----------------------</span></span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a></span>
+<span id="cb15-25"><a href="#cb15-25" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;print-ngrams&#39;</span>,</span>
+<span id="cb15-26"><a href="#cb15-26" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;word_vectors.bin&#39;</span>),</span>
+<span id="cb15-27"><a href="#cb15-27" tabindex="-1"></a>                   <span class="at">word =</span> <span class="st">&#39;word&#39;</span>)</span>
+<span id="cb15-28"><a href="#cb15-28" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" tabindex="-1"></a><span class="co"># save output to file</span></span>
+<span id="cb15-30"><a href="#cb15-30" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb15-31"><a href="#cb15-31" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;ngrams.txt&#39;</span>))</span>
+<span id="cb15-32"><a href="#cb15-32" tabindex="-1"></a>                         </span>
+<span id="cb15-33"><a href="#cb15-33" tabindex="-1"></a><span class="co">#  print output to console</span></span>
+<span id="cb15-34"><a href="#cb15-34" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb15-35"><a href="#cb15-35" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="st">&quot;&quot;</span>)      </span>
+<span id="cb15-36"><a href="#cb15-36" tabindex="-1"></a></span>
+<span id="cb15-37"><a href="#cb15-37" tabindex="-1"></a></span>
+<span id="cb15-38"><a href="#cb15-38" tabindex="-1"></a><span class="co"># truncated output for the &#39;word&#39; query</span></span>
+<span id="cb15-39"><a href="#cb15-39" tabindex="-1"></a><span class="co">#--------------------------------------</span></span>
+<span id="cb15-40"><a href="#cb15-40" tabindex="-1"></a></span>
+<span id="cb15-41"><a href="#cb15-41" tabindex="-1"></a><span class="sc">&lt;</span>w <span class="sc">-</span><span class="fl">0.00983</span> <span class="fl">0.00178</span> <span class="fl">0.01929</span> <span class="fl">0.00994</span> ......</span>
+<span id="cb15-42"><a href="#cb15-42" tabindex="-1"></a>wo <span class="fl">0.01114</span> <span class="fl">0.01570</span> <span class="fl">0.01294</span> <span class="fl">0.01284</span> ......</span>
+<span id="cb15-43"><a href="#cb15-43" tabindex="-1"></a>or <span class="sc">-</span><span class="fl">0.01035</span> <span class="sc">-</span><span class="fl">0.01585</span> <span class="sc">-</span><span class="fl">0.01671</span> <span class="sc">-</span><span class="fl">0.00043</span> ......</span>
+<span id="cb15-44"><a href="#cb15-44" tabindex="-1"></a>rd <span class="fl">0.01840</span> <span class="sc">-</span><span class="fl">0.00378</span> <span class="sc">-</span><span class="fl">0.01468</span> <span class="fl">0.01088</span> ......</span>
+<span id="cb15-45"><a href="#cb15-45" tabindex="-1"></a>d<span class="sc">&gt;</span> <span class="fl">0.00749</span> <span class="fl">0.00720</span> <span class="fl">0.01171</span> <span class="fl">0.01258</span>  ......</span></code></pre></div>
 <p><br></p>
-<p>The <em>‘nn’</em> command returns the nearest neighbors for a specific word based on the input model,</p>
+<p>The <em>‘nn’</em> command returns the nearest neighbors for a
+specific word based on the input model,</p>
 <p><br></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#--------------</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;nn&#39; function</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#--------------</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;nn&#39;</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">5</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">query_word =</span> <span class="st">&#39;sauce&#39;</span>)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;nearest.txt&#39;</span>))</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;nearest.txt&#39;</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">#--------------</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>rice <span class="fl">0.804595</span></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span> <span class="fl">0.799858</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>Vide <span class="fl">0.78893</span></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>store <span class="fl">0.788918</span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>cheese <span class="fl">0.785977</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co">#--------------</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co"># &#39;nn&#39; function</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#--------------</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;nn&#39;</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">5</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>                   <span class="at">query_word =</span> <span class="st">&#39;sauce&#39;</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;nearest.txt&#39;</span>))</span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co"># &#39;nearest.txt&#39;</span></span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co">#--------------</span></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>rice <span class="fl">0.804595</span></span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="sc">&lt;</span><span class="er">/</span>s<span class="sc">&gt;</span> <span class="fl">0.799858</span></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>Vide <span class="fl">0.78893</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>store <span class="fl">0.788918</span></span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a>cheese <span class="fl">0.785977</span></span></code></pre></div>
 <p><br></p>
-<p>The <em>‘analogies’</em> command works for triplets of words (separated by whitespace) and returns ‘k’ rows for each line (triplet) of the input file (separated by an empty line),</p>
+<p>The <em>‘analogies’</em> command works for triplets of words
+(separated by whitespace) and returns ‘k’ rows for each line (triplet)
+of the input file (separated by an empty line),</p>
 <p><br></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#---------------------</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;analogies&#39; function</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#---------------------</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;analogies&#39;</span>,</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">5</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_input =</span> <span class="st">&#39;analogy_queries.txt&#39;</span>, </span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;analogies_output.txt&#39;</span>))</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;analogies_output.txt&#39;</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">#-----------------------</span></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>batter <span class="fl">0.857213</span></span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>I <span class="fl">0.854491</span></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>recipe? <span class="fl">0.851498</span></span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>substituted <span class="fl">0.845269</span></span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>flour <span class="fl">0.842508</span></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>covered <span class="fl">0.808651</span></span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>calls <span class="fl">0.801348</span></span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>fresh <span class="fl">0.800051</span></span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>cold <span class="fl">0.797468</span></span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>always <span class="fl">0.793695</span></span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>.............</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#---------------------</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="co"># &#39;analogies&#39; function</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co">#---------------------</span></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;analogies&#39;</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>                   <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>                         <span class="at">path_input =</span> <span class="st">&#39;analogy_queries.txt&#39;</span>, </span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;analogies_output.txt&#39;</span>))</span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co"># &#39;analogies_output.txt&#39;</span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a><span class="co">#-----------------------</span></span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a>batter <span class="fl">0.857213</span></span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>I <span class="fl">0.854491</span></span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>recipe? <span class="fl">0.851498</span></span>
+<span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a>substituted <span class="fl">0.845269</span></span>
+<span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a>flour <span class="fl">0.842508</span></span>
+<span id="cb17-23"><a href="#cb17-23" tabindex="-1"></a></span>
+<span id="cb17-24"><a href="#cb17-24" tabindex="-1"></a>covered <span class="fl">0.808651</span></span>
+<span id="cb17-25"><a href="#cb17-25" tabindex="-1"></a>calls <span class="fl">0.801348</span></span>
+<span id="cb17-26"><a href="#cb17-26" tabindex="-1"></a>fresh <span class="fl">0.800051</span></span>
+<span id="cb17-27"><a href="#cb17-27" tabindex="-1"></a>cold <span class="fl">0.797468</span></span>
+<span id="cb17-28"><a href="#cb17-28" tabindex="-1"></a>always <span class="fl">0.793695</span></span>
+<span id="cb17-29"><a href="#cb17-29" tabindex="-1"></a></span>
+<span id="cb17-30"><a href="#cb17-30" tabindex="-1"></a>.............</span></code></pre></div>
 <p><br></p>
-<p>Finally, the <em>‘dump’</em> function takes as <em>‘option’</em> one of the <em>‘args’</em>, <em>‘dict’</em>, <em>‘input’</em> or <em>‘output’</em> and dumps the output to a text file,</p>
+<p>Finally, the <em>‘dump’</em> function takes as <em>‘option’</em> one
+of the <em>‘args’</em>, <em>‘dict’</em>, <em>‘input’</em> or
+<em>‘output’</em> and dumps the output to a text file,</p>
 <p><br></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#--------------</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dump function</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#--------------</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;dump&#39;</span>,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">option =</span> <span class="st">&#39;args&#39;</span>)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;dump_data.txt&#39;</span>), </span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">remove_previous_file =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>                         </span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co"># &#39;dump_data.txt&#39;</span></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co">#----------------</span></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>dim <span class="dv">50</span></span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>ws <span class="dv">5</span></span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>epoch <span class="dv">5</span></span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>minCount <span class="dv">1</span></span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>neg <span class="dv">5</span></span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>wordNgrams <span class="dv">1</span></span>
-<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>loss softmax</span>
-<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>model sup</span>
-<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>bucket <span class="dv">0</span></span>
-<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>minn <span class="dv">0</span></span>
-<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>maxn <span class="dv">0</span></span>
-<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>lrUpdateRate <span class="dv">100</span></span>
-<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>t <span class="fl">0.00010</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#--------------</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co"># dump function</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#--------------</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>list_params <span class="ot">=</span> <span class="fu">list</span>(<span class="at">command =</span> <span class="st">&#39;dump&#39;</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>                   <span class="at">model =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;model_cooking.bin&#39;</span>),</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>                   <span class="at">option =</span> <span class="st">&#39;args&#39;</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>res <span class="ot">=</span> <span class="fu">fasttext_interface</span>(list_params, </span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>                         <span class="at">path_output =</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;dump_data.txt&#39;</span>), </span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>                         <span class="at">remove_previous_file =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>                         </span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co"># &#39;dump_data.txt&#39;</span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a><span class="co">#----------------</span></span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>dim <span class="dv">50</span></span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a>ws <span class="dv">5</span></span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a>epoch <span class="dv">5</span></span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a>minCount <span class="dv">1</span></span>
+<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a>neg <span class="dv">5</span></span>
+<span id="cb18-23"><a href="#cb18-23" tabindex="-1"></a>wordNgrams <span class="dv">1</span></span>
+<span id="cb18-24"><a href="#cb18-24" tabindex="-1"></a>loss softmax</span>
+<span id="cb18-25"><a href="#cb18-25" tabindex="-1"></a>model sup</span>
+<span id="cb18-26"><a href="#cb18-26" tabindex="-1"></a>bucket <span class="dv">0</span></span>
+<span id="cb18-27"><a href="#cb18-27" tabindex="-1"></a>minn <span class="dv">0</span></span>
+<span id="cb18-28"><a href="#cb18-28" tabindex="-1"></a>maxn <span class="dv">0</span></span>
+<span id="cb18-29"><a href="#cb18-29" tabindex="-1"></a>lrUpdateRate <span class="dv">100</span></span>
+<span id="cb18-30"><a href="#cb18-30" tabindex="-1"></a>t <span class="fl">0.00010</span></span></code></pre></div>
 </div>
 
 

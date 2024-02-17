@@ -1,4 +1,11 @@
 
+## fastText 1.0.4
+
+* I added a figure to the README.md file showing the differences between *static* and *contextualised* word embeddings
+* A missing include directive was added to the *'/inst/include/utils.h'* file (see the Github pull request: https://github.com/mlampros/fastText/pull/5)
+* I removed the "CXX_STD = CXX11" from the "Makevars" files, and the "[[Rcpp::plugins(cpp11)]]" from the ".cc" files due to the following NOTE from CRAN, "NOTE Specified C++11: please drop specification unless essential" (see also: https://www.tidyverse.org/blog/2023/03/cran-checks-compiled-code/#note-regarding-systemrequirements-c11)
+
+
 ## fastText 1.0.3
 
 * I added a test case for the *'language_identification()'* function (see Github issue: https://github.com/mlampros/fastText/issues/3)
